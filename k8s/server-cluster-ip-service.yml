@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: server-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    # this will match the server-deployments file 
+    component: server
+  ports:
+      # this port was specified in the index.js file for the server
+    - port: 5000
+      targetPort: 5000

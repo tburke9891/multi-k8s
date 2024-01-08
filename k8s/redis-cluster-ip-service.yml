@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-ip-service
+spec:
+  type: ClusterIP
+  selector:
+    component: redis
+  ports:
+    # port the outside world will come in on, default port for redis
+    - port: 6379
+      # port we will redirect to. In this case, we won't.
+      targetPort: 6379

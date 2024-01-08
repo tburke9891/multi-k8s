@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-deployment
+spec:
+  # do not have more than 1 database unless further configured and aware of each other
+  replicas: 1
+  selector:
+    matchLabels:
+      component: postgres
+  template:
+    metadata:
+      labels:
+        component: postgres
+    spec:
+      # specify the PVC we want to allocate to postgres
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: database-persistent-volume-claim
+      containers:
+        - name: postgres
+          image: postgres
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            # specify the volume entry above we want to use
+            - name: postgres-storage
+              # specify location of storage; we will use the postgres default
+              mountPath: /var/lib/postresql/data
+              # required for postgres because it does not like external storage
+              subPath: postgres
+          env:
+            # not PGPASSWORD because of postgres update, still passing same value as server
+            # after running imperative command to set secret pgpassword
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pgpassword
+                  key: PGPASSWORD 
