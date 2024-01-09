@@ -25,11 +25,9 @@ before_install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   # build a test image from the client folder to scan against
   - docker build -t thomasburke9891/react-test -f client/Dockerfile.dev ./client
-
 script:
   # add -e CI=true so the code actually exits
   - docker run -e CI=true thomasburke9891/react-test npm test
-
 deploy:
   # deploy with a script that we specify when we update the master branch
   provider: script
