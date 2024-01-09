@@ -26,7 +26,6 @@ docker push thomasburke9891/multi-worker:latest
 # apply k8s directory config
 kubectl apply -f k8s
 
-
 ###### new ######
 # send the latest image to hub.docker.com
 kubectl set image deployments/server-deployment server=thomasburke9891/multi-server
