@@ -1,3 +1,4 @@
+sudo: required
 services:
   - docker
 env:
@@ -11,19 +12,17 @@ before_install:
   # decrypt service account file to call later with gcloud auth
   - openssl aes-256-cbc -K $encrypted_9f3b5599b056_key -iv $encrypted_9f3b5599b056_iv -in service-account.json.enc -out service-account.json -d
   # install google cloud sdk
-  - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-447.0.0-linux-x86_64.tar.gz | bash > /dev/null;
-  - tar -xf google-cloud-cli-447.0.0-linux-x86_64.tar.gz;
-  - ./google-cloud-sdk/install.sh;
+  - curl https://sdk.cloud.google.com | bash > /dev/null;
+  # close
+  # - curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-447.0.0-linux-x86_64.tar.gz | bash > /dev/null;
+  - source $HOME/google-cloud-sdk/path.bash.inc
+  # install and update kubectl and python in travis
+  - gcloud components update kubectl
   # authenticate to google
   - gcloud auth activate-service-account --key-file service-account.json
   # set the project and zone
   - gcloud config set project multi-k8s-410619
   - gcloud config set compute/zone us-east1-c
-  - ./google-cloud-sdk/bin/gcloud init;
-  # - curl https://sdk.cloud.google.com | bash > /dev/null;
-  - source $HOME/google-cloud-sdk/path.bash.inc
-  # install and update kubectl and python in travis
-  - gcloud components update kubectl
   - gcloud container clusters get-credentials multi-cluster
   # store DOCKER_PASSWORD and DOCKER_USERNAME in travis and call it here
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
